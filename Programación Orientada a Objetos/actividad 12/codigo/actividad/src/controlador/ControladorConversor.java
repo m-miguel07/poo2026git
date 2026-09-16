@@ -1,12 +1,14 @@
 // Archivo: ControladorConversor.java
-// El controlador tal como quedo al final de la clase pasada: un receptor por
-// evento, escrito donde se registra. Hoy no se toca hasta el TODO 5, y ahi
-// solo se agrega: una lambda y un metodo para las libras.
+// El controlador convierte y despues actualiza las vistas a mano. Tiene que
+// conocer a las dos, y acordarse de las dos en cada metodo.
+//
+// TODO 4: el controlador solo le pide cosas al modelo; no actualiza vistas.
 
 package controlador;
 
 import modelo.Conversor;
 import vista.VistaConversor;
+import vista.VistaHistorial;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -25,13 +27,10 @@ public class ControladorConversor {
         this.vista = vista;
         this.conversor = conversor;
 
-        // Un receptor por boton.
         this.vista.getBotonDolares().addActionListener(evento -> this.convertirADolares());
         this.vista.getBotonEuros().addActionListener(evento -> this.convertirAEuros());
         this.vista.getBotonReales().addActionListener(evento -> this.convertirAReales());
-        this.vista.getBotonLibras().addActionListener(evento -> this.convertirALibras());
-        
-        // Enter en el campo convierte a dolares.
+
         this.vista.getCampoPesos().addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent evento) {
@@ -41,7 +40,6 @@ public class ControladorConversor {
             }
         });
 
-        // Doble click en el campo vacia el campo y el resultado.
         this.vista.getCampoPesos().addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent evento) {
@@ -67,6 +65,7 @@ public class ControladorConversor {
         try {
             double pesos = Double.parseDouble(this.vista.getTextoPesos());
             this.vista.mostrarResultado(String.format("%.2f EUR", this.conversor.aEuros(pesos)));
+            // historial.actualizar() no esta: la tabla no se entera de los euros
         } catch (NumberFormatException ex) {
             this.vista.mostrarError("Ingrese un numero");
         } catch (IllegalArgumentException ex) {
@@ -78,17 +77,6 @@ public class ControladorConversor {
         try {
             double pesos = Double.parseDouble(this.vista.getTextoPesos());
             this.vista.mostrarResultado(String.format("%.2f BRL", this.conversor.aReales(pesos)));
-        } catch (NumberFormatException ex) {
-            this.vista.mostrarError("Ingrese un numero");
-        } catch (IllegalArgumentException ex) {
-            this.vista.mostrarError(ex.getMessage());
-        }
-    }
-
-    private void convertirALibras() {
-        try {
-            double pesos = Double.parseDouble(this.vista.getTextoPesos());
-            this.vista.mostrarResultado(String.format("%.2f LIB", this.conversor.aLibras(pesos)));
         } catch (NumberFormatException ex) {
             this.vista.mostrarError("Ingrese un numero");
         } catch (IllegalArgumentException ex) {

@@ -1,29 +1,28 @@
 // Archivo: VistaConversor.java
-// La vista del conversor tal como quedo al final de la clase pasada, con tres
-// botones. Cada componente tiene sus coordenadas escritas a mano con
-// setBounds(), y la ventana ya no es de tamano fijo: se puede agrandar.
+// La vista principal, tal como quedo la clase pasada. Muestra el resultado
+// solo cuando alguien llama a mostrarResultado().
 //
-// TODO 1: la ventana usa BorderLayout; la etiqueta y el campo van en un panel, al norte.
-// TODO 2: el resultado va al sur.
-// TODO 3: los tres botones van en un panel con GridLayout de una fila, en el centro; se borran los setBounds() y el setSize(), y la ventana se arma con pack().
-// TODO 4: el panel de botones con FlowLayout en vez de GridLayout; se deja el que quede mejor.
-// TODO 5: el boton "A libras", sin coordenadas.
-// Los pasos estan en el enunciado.
+// TODO 2: la vista implementa ObservadorConversor y muestra la ultima
+// conversion cuando el Conversor avisa.
 
 package vista;
 
+import modelo.ObservadorConversor;
+import modelo.Conversor;
+
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
+
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JTextField;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 
-import java.awt.FlowLayout;
-import java.awt.BorderLayout;
-import java.awt.GridLayout;
-
-public class VistaConversor {
+public class VistaConversor implements ObservadorConversor {
 
     private final JFrame ventana;
     private final JTextField campoPesos;
@@ -31,45 +30,48 @@ public class VistaConversor {
     private final JButton botonDolares;
     private final JButton botonEuros;
     private final JButton botonReales;
-    private final JButton botonLibras;
 
     public VistaConversor() {
         this.ventana = new JFrame("Conversor de moneda");
-        this.ventana.setSize(360, 200);
         this.ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.ventana.setLocationRelativeTo(null);
-        this.ventana.setLayout(new BorderLayout(10,10));
+        this.ventana.setLayout(new BorderLayout(10, 10));
 
         JLabel etiquetaPesos = new JLabel("Monto en pesos:");
         this.campoPesos = new JTextField(12);
         this.botonDolares = new JButton("A dolares");
         this.botonEuros = new JButton("A euros");
         this.botonReales = new JButton("A reales");
-        this.botonLibras = new JButton("A libras");
         this.etiquetaResultado = new JLabel("Resultado: ...");
 
-        JPanel panelPesos = new JPanel(new FlowLayout()); 
-        panelPesos.add(etiquetaPesos); //A PANEL APARTE
-        panelPesos.add(this.campoPesos); //IDEM
-        this.ventana.add(panelPesos, BorderLayout.NORTH);
+        JPanel panelMonto = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        panelMonto.add(etiquetaPesos);
+        panelMonto.add(this.campoPesos);
 
-        JPanel panelBotones = new JPanel(new FlowLayout());
+        JPanel panelBotones = new JPanel(new GridLayout(1, 0, 8, 0));
+        panelBotones.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
         panelBotones.add(this.botonDolares);
         panelBotones.add(this.botonEuros);
         panelBotones.add(this.botonReales);
-        panelBotones.add(this.botonLibras);
 
-        this.ventana.add(panelBotones,BorderLayout.CENTER);
+        this.etiquetaResultado.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
 
-        this.ventana.add(this.etiquetaResultado,BorderLayout.SOUTH);
+        this.ventana.add(panelMonto, BorderLayout.NORTH);
+        this.ventana.add(panelBotones, BorderLayout.CENTER);
+        this.ventana.add(this.etiquetaResultado, BorderLayout.SOUTH);
+
         this.ventana.pack();
+        this.ventana.setLocationRelativeTo(null);
     }
 
     public void mostrar() {
         this.ventana.setVisible(true);
     }
 
-    // Las fuentes de eventos. El controlador las necesita para registrarse.
+    @Override 
+    public void conversorCambio(Conversor conversor){
+        this.mostrarResultado(String.valueOf(conversor.getUltima()));
+    }
+
     public JButton getBotonDolares() {
         return this.botonDolares;
     }
@@ -82,9 +84,6 @@ public class VistaConversor {
         return this.botonReales;
     }
 
-    public JButton getBotonLibras(){
-        return this.botonLibras;
-    }
     public JTextField getCampoPesos() {
         return this.campoPesos;
     }

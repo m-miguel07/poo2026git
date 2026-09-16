@@ -3,9 +3,6 @@ package controlador;
 import vista.VentanaCombate;
 import modelo.Combate;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 public class Controlador {
     
     private final VentanaCombate vista;
@@ -15,11 +12,20 @@ public class Controlador {
         this.vista = vista;
         this.modelo = modelo;
 
-        this.vista.getBotonSaludo().addActionListener(evento -> this.mostrarMensaje());
-
+        this.vista.getBotonSaludo().addActionListener(evento -> saludo());
+        this.vista.getBotonReiniciar().addActionListener(evento -> reiniciar());
+        this.vista.getBotonSalir().addActionListener(evento -> salir());
     }
 
-    private void mostrarMensaje(){
-        System.out.println("¡Hola, arena de combate!");
+    public void saludo(){
+        this.modelo.mostrarSaludo();
+    }
+
+    public void reiniciar(){
+        this.modelo.mostrarReiniciar();
+    }
+    
+    public void salir(){
+        this.vista.dispose();
     }
 }
